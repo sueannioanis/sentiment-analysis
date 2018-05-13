@@ -2,7 +2,7 @@
 
 [Node + Express + Watson Slack Bot](https://sue.fyi/ai)
 
-This is a node/express server that serves a POST endpoint to slack and communicated with the Watson Tone Analyzer. http://sue.fyi/bot
+This is a node/express server that serves a POST endpoint to slack and communicated with the Watson Tone Analyzer. 
 
 `npm install`
 
