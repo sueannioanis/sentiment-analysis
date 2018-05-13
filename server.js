@@ -74,20 +74,6 @@ function analyzeTone(channel, text) {
   });
 }
 
-function getMessages(channel) {
-  const token = 'SLACK_OAUTH_TOKEN_GOES_HERE'
-  let options = {
-    method: 'GET',
-    url: 'https://slack.com/api/channels.history?token=+'+token+'&channel='+channel
-  };
-  request(options, (error, response, body) => {
-    if (response.statusCode == 200) {
-      const textToAnalyze = JSON.parse(body).messages.filter(res => res.username !== 'ToneAnalyzer').map(res => res.text).toString();
-      analyzeTone(channel, textToAnalyze);
-    }
-  });
-}
-
 function postMessage(channel, message) {
   let options = {
     method: 'POST',
