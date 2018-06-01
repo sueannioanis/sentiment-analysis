@@ -7,8 +7,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const server = app.listen(4000, () => {
-  console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);});
+const server = app.listen(4000);
 
 const watson = require('watson-developer-cloud');
 let tone_analyzer = watson.tone_analyzer({
@@ -28,13 +27,14 @@ app.post('/event', (req, res) => {
       break;
     case 'event_callback':
       if (req.body.event.ts > latestTimestamp && !req.body.event.bot_id) {
-        const text = req.body.event.text;
-        if (text && text.includes('<@BOT_ID_GOES_HERE>') && !req.body.event.text.replace('<@BOT_ID_GOES_HERE>','')) {
-          postMessage(req.body.event.channel, 'Hi! My name is Watson. Tag me if you\'d like to analyze your text.')
-        } else if (text && text.includes('<@BOT_ID_GOES_HERE>')) {
-          analyzeTone(req.body.event.channel, req.body.event.text.replace('<@BOT_ID_GOES_HERE>',''))
+        const {text, channel, ts} = req.body.event;
+        const textToAnalyze = text.replace('<@BOT_ID_GOES_HERE>','');
+        if (!textToAnalyze) {
+          postMessage(channel, 'Hi! My name is Watson. Tag me if you\'d like to analyze your text.')
+        } else if (text) {
+          analyzeTone(channel, textToAnalyze)
         }
-        latestTimestamp = req.body.event.ts;
+        latestTimestamp = ts;
       }
       break;
   }
@@ -68,8 +68,6 @@ function analyzeTone(channel, text) {
         })
       }
     })
-    console.log(emotionString)
-    console.log(emotes)
     postMessage(channel, 'Emoting ... ' + (emotes || '😐') + '\n\n' + emotionString)
   });
 }
