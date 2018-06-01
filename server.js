@@ -9,6 +9,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const server = app.listen(4000);
 
+const emotions = {
+  anger : '😠',
+  disgust : '🤢',
+  fear : '😱',
+  joy : '😄',
+  sadness : '😞'
+}
+
+const confidencethreshold = 0.55;
+
 const watson = require('watson-developer-cloud');
 let tone_analyzer = watson.tone_analyzer({
   url: 'https://gateway.watsonplatform.net/tone-analyzer/api',
@@ -39,16 +49,6 @@ app.post('/event', (req, res) => {
       break;
   }
 });
-
-const emotions = {
-  anger : '😠',
-  disgust : '🤢',
-  fear : '😱',
-  joy : '😄',
-  sadness : '😞'
-}
-
-const confidencethreshold = 0.55;
 
 function analyzeTone(channel, text) {
   tone_analyzer.tone({text}, (err, tone) => {
