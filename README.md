@@ -7,3 +7,9 @@ Endpoint using Node.js - communicates with Slack API and Watson's Tone Analyzing
 `npm install`
 
 `node server.js`
+
+
+
+#### Preview
+
+<img src="https://cdn-images-1.medium.com/max/1200/1*QwUIMxF9gVisCrfC-hvn7Q.png" width=500 />
