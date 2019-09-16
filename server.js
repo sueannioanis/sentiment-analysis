@@ -6,6 +6,7 @@ const app = express();
 const watson = require("watson-developer-cloud");
 
 const ID = "<@BOT_ID_GOES_HERE>";
+const OAUTH = "SLACK_OAUTH_TOKEN_GOES_HERE";
 const THRESHOLD = 0.55;
 
 const CONFIG = {
@@ -56,7 +57,7 @@ app.post("/event", (req, res) => {
   }
 });
 
-function analyzeTone(channel, text) {
+const analyzeTone = (channel, text) => {
   tone_analyzer.tone({ text }, (err, tone) => {
     let emotes = "";
     let emotionString = "Tone Analysis:\n";
@@ -66,9 +67,13 @@ function analyzeTone(channel, text) {
       "Emoting ... " + (emotes || "😐") + "\n\n" + emotionString
     );
   });
-}
+};
 
-function generateString(tonecategory) {
+const updateString = emotion => {
+  emotion.tone_name + ": " + emotion.score * 100 + "%\n";
+};
+
+const generateString = tonecategory => {
   if (tonecategory.category_id === "emotion_tone") {
     tonecategory.tones.forEach(emotion => {
       if (
@@ -77,21 +82,21 @@ function generateString(tonecategory) {
       ) {
         emotes += EMOTIONS[emotion.tone_id];
       }
-      emotionString += emotion.tone_name + ": " + emotion.score * 100 + "%\n";
+      emotionString += updateString(emotion);
     });
   } else {
     tonecategory.tones.forEach(emotion => {
-      emotionString += emotion.tone_name + ": " + emotion.score * 100 + "%\n";
+      emotionString += updateString(emotion);
     });
   }
-}
+};
 
-function postMessage(channel, message) {
+const postMessage = (channel, message) => {
   let options = {
     method: "POST",
     url: "https://slack.com/api/chat.postMessage",
     form: {
-      token: "SLACK_OAUTH_TOKEN_GOES_HERE", // Your Slack OAuth token
+      token: OAUTH,
       channel,
       text: message
     }
@@ -99,4 +104,4 @@ function postMessage(channel, message) {
   request(options, response => {
     console.log(response.body);
   });
-}
+};
